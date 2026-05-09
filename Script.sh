@@ -105,7 +105,10 @@ while true; do
     echo -e "${CYAN}  ─────────────────────────────────────────────────${RESET}"
 
     # --- Network ---
-    ip_addr=$(hostname -I | awk '{print $1}')
+    ip_addr=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}')
+    if [ -z "$ip_addr" ]; then
+        ip_addr=$(ip addr show | awk '/inet / && !/127.0.0.1/ {print $2}' | cut -d/ -f1 | head -1)
+    fi
     echo -e "${BOLD}  🌐  Local IP:  ${GREEN}${ip_addr}${RESET}"
 
     # --- Top Process ---
